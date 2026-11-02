@@ -1,21 +1,25 @@
 { pkgs ? import <nixpkgs> {} }:
 
 let
-  # Wrap SBCL with the Quicklisp packages pre-baked from the Nix store
-  mySbcl = pkgs.sbcl.withPackages (ps: [
-    ps.lquery
-    # You can add other Quicklisp packages here, e.g., ps.alexandria
+  myLua = pkgs.lua.withPackages (ps: with ps; [
+    # Add any pure-nix lua packages here if needed, e.g., luafilesystem
+
   ]);
 in
 pkgs.mkShell {
-  name = "lisp-lquery-env";
-
   buildInputs = [
-    mySbcl
+    myLua
+    pkgs.luarocks
   ];
 
   shellHook = ''
-    echo "Welcome to your SSG environment!"
-
-  '';
+    # Optional: set up a local rocktree in the project directory so htmlparser installs cleanly
+    export LUA_PATH="$(luarocks path --lr-path);$LUA_PATH"
+    export LUA_CPATH="$(luarocks path --lr-cpath);$LUA_CPATH"
+    
+    # Check if htmlparser is installed locally, otherwise install it to a local tree
+    if ! luarocks list --local | grep -q htmlparser; then
+      luarocks install --local htmlparser
+    fi
+  '' ;
 }
