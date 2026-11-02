@@ -17,9 +17,9 @@ pkgs.mkShell {
     export LUA_PATH="$(luarocks path --lr-path);$LUA_PATH"
     export LUA_CPATH="$(luarocks path --lr-cpath);$LUA_CPATH"
     
-    # Check if htmlparser is installed locally, otherwise install it to a local tree
-    if ! luarocks list --local | grep -q htmlparser; then
-      luarocks install --local htmlparser
+    # Check if gumbo is installed locally, otherwise install it to a local tree
+    if ! luarocks list --local | grep -q gumbo; then
+      luarocks install --local gumbo
     fi
   '' ;
 }
